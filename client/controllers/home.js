@@ -1,5 +1,5 @@
 angular.module('Instagram')
-  .controller('HomeCtrl', function($scope) {
+  .controller('HomeCtrl', function($scope, $window, $rootScope, $auth) {
  
     $scope.isAuthenticated = function() {
       // check if logged in
