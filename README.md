@@ -9,7 +9,6 @@ Create an app on the [Instagram Developer page](http://instagram.com/developer/)
 ### Running App
 ```sh
 $ mongod
-
 # In another terminal window
 $ cd server
 $ npm install
