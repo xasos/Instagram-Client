@@ -98,7 +98,23 @@ app.post('/auth/signup', function(req, res) {
 });
 
 app.post('/auth/instagram', function(req, res) {
- 
+	var accessTokenUrl = 'https://api.instagram.com/oauth/access_token';
+
+	var params = {
+		client_id: req.body.clientId,
+		redirect_uri: req.body.redirectUri,
+		client_secret: config.clientSecret,
+		code: req.body.code,
+		grant_type: 'authorization_code'
+	};
+
+	request.post({url: accessTokenUrl, form: params, json: true}, function(e, r, body) {
+		if (req.headers.authorization) {
+			
+		} else {
+
+		}
+	});
 });
 
 function createToken(user) {
