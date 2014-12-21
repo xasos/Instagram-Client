@@ -15,7 +15,7 @@ $ cd server
 $ npm install
 $ node server.js
 
-# In another terminal window
+# In yet another terminal window
 $ cd client
 $ python -m SimpleHTTPServer
 $ open localhost:8000/
