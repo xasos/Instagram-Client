@@ -30,5 +30,5 @@ angular.module('Instagram', ['ngRoute', 'ngMessages', 'satellizer'])
               scope: ['likes'],
               scopeDelimiter: '+',
               authorizationEndpoint: 'https://api.instagram.com/oauth/authorize'
+        });
 });
-    });
