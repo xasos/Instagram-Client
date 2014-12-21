@@ -13,7 +13,6 @@ $ mongod
 $ cd server
 $ npm install
 $ node server.js
-
 # In yet another terminal window
 $ cd client
 $ python -m SimpleHTTPServer
