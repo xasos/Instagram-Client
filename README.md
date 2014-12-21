@@ -13,7 +13,8 @@ $ mongod && node app
 
 # In another terminal window
 $ cd client
-$ open index.html
+$ python -m SimpleHTTPServer
+$ open localhost:8000/
 ```
 
 ## License
