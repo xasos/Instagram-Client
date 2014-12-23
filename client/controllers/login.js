@@ -1,5 +1,6 @@
 angular.module('Instagram')
 	.controller('LoginCtrl', function($scope, $window, $location, $rootScope, $auth) {
+		
 		$scope.instagramLogin = function() {
 			$auth.authenticate('instagram')
 				.then(function(response) {
@@ -22,7 +23,7 @@ angular.module('Instagram')
 					angular.forEach(response.data.message, function(message, field) {
 						$scope.loginForm[field].$setValidity('server', false);
 						$scope.errorMessage[field] = response.data.message[field];
+					});
 				});
-			});
-		};
+			};
 	});

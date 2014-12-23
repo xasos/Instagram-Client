@@ -8,8 +8,6 @@ var mongoose = require('mongoose');
 var path = require('path');
 var request = require('request');
 var config = require('./config');
- 
-var app = express();
 
 var User = mongoose.model('User', new mongoose.Schema({
   instagramId: { type: String, index: true },
@@ -22,15 +20,34 @@ var User = mongoose.model('User', new mongoose.Schema({
 }));
  
 mongoose.connect(config.db);
- 
+
+var app = express();
+// app.use(cors());
 app.set('port', process.env.PORT || 3000);
-app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8000');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,Authorization,content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
+});
 
 function isAuthenticated(req, res, next) {
-	if (!(req.headers &amp;amp;amp;&amp;amp;amp; req.headers.authorization)) {
+	if (!(req.headers && req.headers.authorization)) {
 		return res.status(400).send({ message: 'You did not provide a JSON Web Token in the Authorization header.' });
   	}
  
@@ -39,7 +56,7 @@ function isAuthenticated(req, res, next) {
 	var payload = jwt.decode(token, config.tokenSecret);
 	var now = moment().unix();
  
-	if (now &amp;amp;gt; payload.exp) {
+	if (now > payload.exp) {
 		return res.status(401).send({ message: 'Token has expired.' });
 	}
  
@@ -150,8 +167,8 @@ app.post('/auth/instagram', function(req, res) {
             	});
 
           	}
-        });
-      });
+        	});
+      	});
     } else {
       // Step 2b. Create a new user account or return an existing one.
     	User.findOne({ instagramId: body.user.id }, function(err, existingUser) {
@@ -172,11 +189,48 @@ app.post('/auth/instagram', function(req, res) {
           	var token = createToken(user);
           	res.send({ token: token, user: user });
         });
-      });
+      	});
     }
   });
 });
 
+app.get('/api/feed', isAuthenticated, function(req, res) {
+	var feedUrl = 'https://api.instagram.com/v1/users/self/feed';
+	var params = { access_token: req.user.accessToken };
+
+	request.get({ url: feedUrl, qs: params, json: true }, function(error, response, body) {
+		if (!error && response.statusCode == 200) {
+			res.send(body.data);
+		}
+	});
+});
+
+app.get('/api/media/:id', function(req, res, next) {
+	var mediaUrl = 'https://api.instagram.com/v1/media/' + req.params.id;
+	var params = { access_token: req.user.accessToken };
+
+	request.get({ url: mediaUrl, qs: params, json: true }, function(error, response, body) {
+		if (!error && response.statusCode == 200) {
+			res.send(body.data);
+		}
+	});
+});
+
+app.post('/api/like', function(req, res, next) {
+	var mediaId = req.body.mediaId;
+	var accessToken = { access_token: req.user.accessToken };
+	var likeUrl = 'https://api.instagram.com/v1/media/' + mediaId + '/likes';
+
+	request.post({ url: likeUrl, form: accessToken, json: true }, function(error, response, body) {
+		if (response.statusCode != 200) {
+			return res.status(response.statusCode).send({
+				code: response.statusCode,
+				message: body.meta.error_message
+			});
+		}
+		res.status(200).end();
+	});
+});
 
 function createToken(user) {
 	var payload = {
