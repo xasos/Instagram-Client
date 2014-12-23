@@ -1,0 +1,60 @@
+<div class="container">
+ 
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="row">
+ 
+        <div class="col-xs-6">
+          <img ng-src="{{photo.images.standard_resolution.url}}" class="img-responsive">
+        </div>
+ 
+        <div class="col-xs-6">
+          <div class="caption">
+            <h5><a href="http://instagram.com/{{photo.user.username}}">{{photo.user.username}}</a></h5>
+            <h6 class="text-muted"><i class="ion-clock"></i> {{photo.created_time * 1000 | date:'short'}}</h6>
+ 
+            <p>{{photo.caption.text}}</p>
+ 
+          </div>
+        </div>
+ 
+      </div>
+ 
+      <div class="row">
+ 
+        <div class="col-xs-12">
+          <h5><i class="ion-heart text-danger"></i> {{photo.likes.count}} likes</h5>
+ 
+          <hr class="soften">
+          <h5 class="text-center"><i class="ion-chatbox-working text-primary"></i> Comments</h5>
+ 
+          <ul class="media-list">
+            <li ng-repeat="comment in photo.comments.data" class="media">
+              <a class="pull-left" href="http://instagram.com/{{comment.from.username}}">
+                <img class="media-object img-rounded" ng-src="{{comment.from.profile_picture}}">
+              </a>
+              <div class="media-body">
+                <a class="media-heading" href="http://instagram.com/{{comment.from.username}}">@{{comment.from.username}}</a>
+                {{comment.text}}
+              </div>
+            </li>
+            <li ng-if="!photo.comments.data.length">No comments</li>
+          </ul>
+ 
+          <hr class="soften">
+ 
+          <div class="btn-group">
+            <button class="btn" ng-class="{ 'btn-danger': hasLiked, 'btn-default': !hasLiked }" ng-click="like()">
+              <i class="ion-heart" ng-class="{ 'text-danger': !hasLiked}"></i>
+              <span ng-if="hasLiked">Liked</span>
+              <span ng-if="!hasLiked">Like</span>
+            </button>
+          </div>
+ 
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+ 
+</div>
